@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inner Space - Mental Health Support for Indian Students</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'); /* Calming nature image */
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            color: #333;
+        }
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px 0;
+            text-align: center;
+        }
+        .main-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .section {
+            padding: 80px 0;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background: #4CAF50;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+        }
+        .btn-primary:hover {
+            background: #45a049;
+        }
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        #quiz-results {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .severe { background: #f8d7da; color: #721c24; }
+        .low { background: #d4edda; color: #155724; }
+        /* Chatbot Styles */
+        #chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        #chat-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+        }
+        #chat-header {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            font-weight: 600;
+        }
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .bot-message {
+            background: #e3f2fd;
+            margin-right: auto;
+        }
+        .user-message {
+            background: #4CAF50;
+            color: white;
+            margin-left: auto;
+        }
+        #chat-input-container {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+        #chat-input {
+            flex: 1;
+        }
+        #chat-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold text-primary mb-4">Welcome to Inner Space</h1>
+            <p class="lead mb-5">In today's fast-paced academic world, your mental health is paramount. We understand the unique pressures Indian students face—from board exams to competitive entrances like JEE and NEET. This platform is designed to support your well-being with resources, assessments, and help tailored for you. Explore Inner Space to access tools for a healthier mind and brighter future.</p>
+            <a href="#main-content" class="btn btn-primary btn-lg">Enter Inner Space</a>
+        </div>
+    </section>
+
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button id="lang-btn" class="btn btn-outline-secondary">हिंदी (Hindi)</button>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light main-nav fixed-top" id="main-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">Inner Space</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#resources">Resources</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#quiz">Assessment</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#booking">Book Counsellor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#helplines">Helplines</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#emergency">Emergency</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="main-content" class="container-fluid pt-5">
+        <!-- Resources Section -->
+        <section id="resources" class="section">
+            <div class="container">
+                <h2 class="text-center mb-5">Resources & Videos</h2>
+                <p class="text-center mb-5">Access articles, videos from WHO and Government of India, and India-specific mental health surveys. All content is sourced from official, reliable platforms.</p>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>WHO: Mental Health Fact Sheet</h5>
+                                <p>Key facts on mental health, determinants, and WHO response.</p>
+                                <a href="https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response" target="_blank" class="btn btn-primary">Read Article</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>WHO: Mental Disorders</h5>
+                                <p>Overview of mental disorders and treatment gaps.</p>
+                                <a href="https://www.who.int/news-room/fact-sheets/detail/mental-disorders" target="_blank" class="btn btn-primary">Read Article</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>Govt of India: National Mental Health Programme</h5>
+                                <p>Details on NMHP objectives and implementation.</p>
+                                <a href="https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=1043&lid=359" target="_blank" class="btn btn-primary">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>WHO EMRO: Mental Health Videos</h5>
+                                <p>Short videos debunking myths about mental health (available in multiple languages).</p>
+                                <a href="https://www.emro.who.int/mnh/videos/index.html" target="_blank" class="btn btn-primary">Watch Videos</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>Govt of India: Advancing Mental Healthcare</h5>
+                                <p>Policies, Tele MANAS, and training initiatives.</p>
+                                <a href="https://mohfw.gov.in/?q=en/pressrelease-206" target="_blank" class="btn btn-primary">Read Article</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5>National Mental Health Survey of India 2015-16</h5>
+                                <p>Key findings on prevalence and systems in India.</p>
+                                <a href="https://mohfw.gov.in/sites/default/files/National%20Mental%20Health%20Survey,%202015-16%20-%20Mental%20Health%20Systems_0.pdf" target="_blank" class="btn btn-primary">Download Survey</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Psychological Evaluation Chatbot/Quiz -->
+        <section id="quiz" class="section">
+            <div class="container">
+                <h2 class="text-center mb-5">Psychological Evaluation for Students</h2>
+                <p class="text-center mb-5">Take this 12-question self-assessment tailored for Indian students. Answer honestly on a scale of 0-3 (0: Never, 1: Rarely, 2: Sometimes, 3: Often). This is not a diagnosis but a guide.</p>
+                <form id="quiz-form">
+                    <div class="mb-3">
+                        <label class="form-label">1. Do you feel stressed about exams or academic performance (e.g., board exams, JEE/NEET)?</label>
+                        <select class="form-select" name="q1"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">2. Have you felt hopeless or lost interest in studies/hobbies due to family expectations?</label>
+                        <select class="form-select" name="q2"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">3. Do you experience anxiety in social situations, like college festivals or peer comparisons?</label>
+                        <select class="form-select" name="q3"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">4. Have you had trouble sleeping due to worries about future career or finances?</label>
+                        <select class="form-select" name="q4"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">5. Do you feel sad or guilty about not meeting parental/societal expectations?</label>
+                        <select class="form-select" name="q5"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">6. Have you experienced physical symptoms like headaches from academic pressure?</label>
+                        <select class="form-select" name="q6"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">7. Do you avoid talking to friends/family about your feelings due to stigma?</label>
+                        <select class="form-select" name="q7"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">8. Have you thought about self-harm during stressful times like results day?</label>
+                        <select class="form-select" name="q8"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">9. Do you feel overwhelmed by competition in coaching classes or college?</label>
+                        <select class="form-select" name="q9"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">10. Have cultural or regional pressures (e.g., marriage, jobs) affected your mood?</label>
+                        <select class="form-select" name="q10"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">11. Do you struggle with concentration due to worries about economic instability?</label>
+                        <select class="form-select" name="q11"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">12. Have you felt isolated in a big city away from home for studies?</label>
+                        <select class="form-select" name="q12"><option value="0">0 - Never</option><option value="1">1 - Rarely</option><option value="2">2 - Sometimes</option><option value="3">3 - Often</option></select>
+                    </div>
+                    <button type="button" id="submit-quiz" class="btn btn-primary">Submit Assessment</button>
+                </form>
+                <div id="quiz-results" class="hidden"></div>
+            </div>
+        </section>
+
+        <!-- Book a Counsellor -->
+        <section id="booking" class="section">
+            <div class="container">
+                <h2 class="text-center mb-5">Book a Counsellor on Campus or Nearby</h2>
+                <p class="text-center mb-5">Connect with certified counsellors and psychologists. They can create profiles on our platform for easy booking. (Prototype: Simulated form)</p>
+                <div class="row g-3 justify-content-center">
+                    <div class="col-md-4">
+                        <label class="form-label">Location (City/Campus)</label>
+                        <input type="text" class="form-control" placeholder="e.g., Delhi University">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Preferred Language</label>
+                        <select class="form-select"><option>English</option><option>Hindi</option></select>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary">Search Counsellors</button>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Dr. Priya Sharma</h5>
+                                <p>Campus Counsellor, IIT Delhi. Specializes in exam stress.</p>
+                                <button class="btn btn-primary">Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Helplines -->
+        <section id="helplines" class="section">
+            <div class="container">
+                <h2 class="text-center mb-5">Government Helplines</h2>
+                <div class="row text-center">
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-warning">
+                            <div class="card-body">
+                                <h5>Tele MANAS</h5>
+                                <p>24/7 Mental Health Support</p>
+                                <h3>14416</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card bg-info">
+                            <div class="card-body">
+                                <h5>KIRAN Helpline</h5>
+                                <p>Mental Health Rehabilitation</p>
+                                <h3>1800-599-0019</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center">Available in 13+ languages including Hindi.</p>
+            </div>
+        </section>
+
+        <!-- Emergency Section -->
+        <section id="emergency" class="section">
+            <div class="container">
+                <h2 class="text-center mb-5">Emergency Medical Situations</h2>
+                <p class="text-center mb-5">If you see a friend in crisis (e.g., suicidal thoughts, severe distress), act immediately. Here's what to do in India:</p>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Immediate Steps:</h5>
+                                <ul>
+                                    <li>Stay calm and listen without judgment.</li>
+                                    <li>Call emergency services: 108 (Ambulance) or 100 (Police if danger).</li>
+                                    <li>Contact Tele MANAS (14416) for guidance.</li>
+                                    <li>If on campus, alert warden/security.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>For Suicidal Crisis:</h5>
+                                <ul>
+                                    <li>Remove access to harmful items.</li>
+                                    <li>Encourage professional help; do not leave alone.</li>
+                                    <li>Seek nearest hospital with psych unit (e.g., AIIMS, govt hospitals).</li>
+                                    <li>Awareness: Under National Suicide Prevention Strategy.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-danger text-center">
+                    In life-threatening situations, call 108 immediately.
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Chatbot Toggle Button -->
+    <button id="chat-toggle" class="btn btn-primary">💬</button>
+
+    <!-- Chatbot Container -->
+    <div id="chat-container">
+        <div id="chat-header">
+            <span>Wellness Bot</span>
+            <button id="chat-close">&times;</button>
+        </div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" class="form-control" placeholder="Type your message...">
+            <button id="send-btn" class="btn btn-primary">Send</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Language Toggle
+        document.getElementById('lang-btn').addEventListener('click', function() {
+            const btn = this;
+            if (btn.textContent.includes('Hindi')) {
+                btn.textContent = 'English';
+                document.querySelectorAll('h2, p, label').forEach(el => {
+                    if (el.tagName === 'H2') el.textContent += ' (हिंदी अनुवाद यहाँ)';
+                });
+            } else {
+                btn.textContent = 'हिंदी (Hindi)';
+                location.reload();
+            }
+        });
+
+        // Quiz Logic (Fixed selector bug)
+        document.getElementById('submit-quiz').addEventListener('click', function(e) {
+            let score = 0;
+            for (let i = 1; i <= 12; i++) {
+                const value = document.querySelector(`select[name="q${i}"]`).value;
+                score += parseInt(value || 0);
+            }
+            const results = document.getElementById('quiz-results');
+            results.classList.remove('hidden');
+            if (score > 24) {
+                results.innerHTML = '<div class="severe"><h4>Severe Indicators Detected</h4><p>Your score suggests significant stress. Please book a counsellor immediately or call Tele MANAS (14416). We recommend professional help right away.</p><a href="#booking" class="btn btn-danger">Book Now</a></div>';
+            } else if (score > 12) {
+                results.innerHTML = '<div class="low"><h4>Moderate Stress</h4><p>Suggestions: Read articles from resources, watch relaxing WHO videos, or talk to peers. Consider booking a session.</p><a href="#resources" class="btn btn-success">Explore Resources</a></div>';
+            } else {
+                results.innerHTML = '<div class="low"><h4>Low Stress</h4><p>Great! Maintain wellness with regular check-ins and resources.</p><a href="#resources" class="btn btn-success">More Tips</a></div>';
+            }
+        });
+
+        // Smooth scrolling for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Chatbot Logic
+        const chatToggle = document.getElementById('chat-toggle');
+        const chatContainer = document.getElementById('chat-container');
+        const chatClose = document.getElementById('chat-close');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        let chatState = 'greeting';
+        let currentQuestion = 0;
+        let scores = [];
+
+        const phq9Questions = [
+            "Over the last 2 weeks, how often have you had little interest or pleasure in doing things?",
+            "Over the last 2 weeks, how often have you been feeling down, depressed, or hopeless?",
+            "Over the last 2 weeks, how often have you had trouble falling asleep, staying asleep, or sleeping too much?",
+            "Over the last 2 weeks, how often have you felt tired or had little energy?",
+            "Over the last 2 weeks, how often has your appetite been poor or have you been overeating?",
+            "Over the last 2 weeks, how often have you been feeling bad about yourself, or that you are a failure, or have let yourself or your family down?",
+            "Over the last 2 weeks, how often have you had trouble concentrating on things like reading or watching TV?",
+            "Over the last 2 weeks, how often have you been moving or speaking so slowly that other people could notice, or the opposite - being so fidgety or restless that you have been moving much more than usual?",
+            "Over the last 2 weeks, how often have you had thoughts that you would be better off dead, or of hurting yourself?"
+        ];
+
+        const scales = " (0: Not at all, 1: Several days, 2: More than half the days, 3: Nearly every day)";
+
+        function addMessage(text, isUser = false) {
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            message.innerHTML = text;
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function startAssessment() {
+            chatState = 'assessing';
+            currentQuestion = 0;
+            scores = [];
+            addMessage("Great! This is the PHQ-9 assessment, a quick 9-question check for depression symptoms over the last 2 weeks. It's not a diagnosis, just a guide. We'll go one question at a time. Reply with a number 0-3.");
+            askQuestion();
+        }
+
+        function askQuestion() {
+            if (currentQuestion < phq9Questions.length) {
+                chatState = 'question';
+                addMessage(`${currentQuestion + 1}. ${phq9Questions[currentQuestion]}${scales}`);
+            } else {
+                finishAssessment();
+            }
+        }
+
+        function finishAssessment() {
+            chatState = 'done';
+            const totalScore = scores.reduce((a, b) => a + b, 0);
+            addMessage(`Thanks for completing the assessment. Your total score is ${totalScore} out of 27.`);
+            let response = '';
+            if (totalScore >= 20) {
+                response = "Your score indicates severe depression symptoms. Please seek professional help immediately. I recommend calling Tele MANAS at 14416 or heading to the nearest emergency service (108). Let's find help - what's your city or campus (e.g., Delhi University)? I'll suggest nearby counselors or psychiatrists.";
+            } else if (totalScore >= 15) {
+                response = "Your score suggests moderately severe symptoms. It's important to talk to a professional. Book a counselor or psychiatrist now. What's your location so I can help find one nearby or on campus? Alternatively, call KIRAN at 1800-599-0019.";
+            } else if (totalScore >= 10) {
+                response = "Your score indicates moderate symptoms. Consider speaking with a counselor soon. What's your city/campus? I can help locate one. In the meantime, try deep breathing: Inhale for 4 counts, hold for 4, exhale for 4. Repeat 5 times.";
+            } else if (totalScore >= 5) {
+                response = "Mild symptoms detected. You're doing well, but let's build on that! Try a short walk outside or journaling 3 things you're grateful for. If you'd like, share your location for counselor recommendations.";
+            } else {
+                response = "Excellent! Minimal symptoms. Keep up the great work. For motivation: Remember, every small step counts towards your dreams. Want tips on staying balanced during exams?";
+            }
+            addMessage(response);
+        }
+
+        function handleUserInput(input) {
+            const numInput = parseInt(input);
+            if (chatState === 'question' && !isNaN(numInput) && numInput >= 0 && numInput <= 3) {
+                scores.push(numInput);
+                currentQuestion++;
+                addMessage(`Got it: ${numInput}`);
+                askQuestion();
+            } else if (chatState === 'greeting') {
+                if (input.toLowerCase().includes('yes') || input.toLowerCase().includes('start')) {
+                    startAssessment();
+                } else {
+                    addMessage("I'm here for the PHQ-9 mental health assessment. Type 'yes' to start!");
+                }
+            } else if (chatState === 'done') {
+                if (input.toLowerCase().includes('delhi') || input.toLowerCase().includes('iit')) {
+                    addMessage("Based on your location (Delhi/IIT), I recommend Dr. Priya Sharma at IIT Delhi for exam stress. Scroll to the 'Book a Counsellor' section or call 14416 for immediate support. You're not alone!");
+                } else if (input) {
+                    addMessage(`For ${input}, check nearby government hospitals or use the booking form on this site. Strongly suggest professional help - <a href="#booking">Book Now</a>`);
+                } else {
+                    addMessage("To find a counselor, share your city. Remember, seeking help is a strength!");
+                }
+                chatState = 'greeting';
+                addMessage("Want to retake the assessment or chat more? Type 'start' to begin again.");
+            } else {
+                addMessage("Please reply with a number 0-3 for the question.");
+            }
+        }
+
+        chatToggle.addEventListener('click', () => {
+            chatContainer.style.display = chatContainer.style.display === 'flex' ? 'none' : 'flex';
+            if (chatContainer.style.display === 'flex' && chatMessages.children.length === 0) {
+                addMessage("Hi! I'm the Wellness Bot, powered by a simple AI (in full version, integrated with a robust LLM like Grok via xAI API - see https://x.ai/api for details). Ready for a quick PHQ-9 assessment to check your mental health? Type 'yes' to start!");
+            }
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatContainer.style.display = 'none';
+        });
+
+        sendBtn.addEventListener('click', () => {
+            const input = chatInput.value.trim();
+            if (input) {
+                addMessage(input, true);
+                handleUserInput(input);
+                chatInput.value = '';
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
